@@ -1,30 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use NickBeen\RickAndMortyPhpApi\Character;
-use Response;
+use App\Services\RickAndMortyService;
 
 class RickAndMortyController extends Controller {
 
 	protected $character;
+	protected $rickAndMorty;
 
-	public function __construct( Character $character ) {
-		$this->character = $character;
-	}
+	public function __construct(RickAndMortyService $rickAndMorty) {
+        $this->rickAndMorty = $rickAndMorty;
+    }
 
-	function index($page = 1) {
-		$characters = $this->character->page($page)->get();
+	public function index($page) {
+        return $this->rickAndMorty->getCharacters($page);
+    }
 
-		foreach ($characters->results as $character) {
-			$character->episode_count = count($character->episode);
-		}
-	
-		return response()->json($characters);
-	}
-
-	function show( $id ) {
-		return response()->json( $this->character->get( $id ) );
-	}
+    public function show($id) {
+        return $this->rickAndMorty->getCharacterById($id);
+    }
 }
